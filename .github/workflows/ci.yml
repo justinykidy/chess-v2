@@ -1,0 +1,20 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check files exist
+        run: |
+          test -f index.html
+          test -f css/style.css
+          test -f js/game.js
+          test -f js/effects.js
+          test -f js/ai.js
+          test -f js/audio.js
+      - name: Validate HTML
+        run: |
+          grep -q '<canvas' index.html
+          grep -q 'chess.js' index.html
+          grep -q 'stockfish' index.html || grep -q 'stockfish' js/ai.js
