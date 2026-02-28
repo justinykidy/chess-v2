@@ -124,6 +124,7 @@ class AIManager {
 
     if (this.pending) {
       clearTimeout(this.pending.timeoutId);
+      this.worker.postMessage("stop");
       this.pending.resolve(null);
       this.pending = null;
     }
@@ -131,12 +132,14 @@ class AIManager {
     return new Promise((resolve) => {
       const timeoutId = setTimeout(() => {
         if (this.pending && this.pending.requestId === requestId && this.pending.fen === fen) {
+          this.worker.postMessage("stop");
           this.pending = null;
           resolve(null);
         }
       }, 10000);
 
       this.pending = { resolve, timeoutId, requestId, fen };
+      this.worker.postMessage("stop");
       this.worker.postMessage(`position fen ${fen}`);
       this.worker.postMessage(`go depth ${depth}`);
     });

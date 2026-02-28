@@ -273,6 +273,7 @@ class GameController {
   }
 
   undoMove() {
+    const isAITurn = this.chess.turn() === "b";
     this.requestId += 1;
     this.aiThinking = false;
     this.pendingPromotion = null;
@@ -289,8 +290,11 @@ class GameController {
       return;
     }
 
-    // In AI mode, undo player + AI plies when possible.
-    this.chess.undo();
+    // If AI hasn't moved yet (black to move), only undo the player's move.
+    // Otherwise undo both AI + player plies.
+    if (!isAITurn) {
+      this.chess.undo();
+    }
     this.lastMove = null;
     this.selectedSquare = null;
     this.legalTargets = [];
@@ -463,14 +467,35 @@ class GameController {
     }
 
     const movingPiece = this.chess.get(best.from);
-    const result = this.chess.move({ from: best.from, to: best.to, promotion: best.promotion });
+    let result = this.chess.move({ from: best.from, to: best.to, promotion: best.promotion });
+    let movedPiece = movingPiece;
     if (!result) {
-      this.aiThinking = false;
-      this.refreshUI();
-      return;
+      const legal = this.chess.moves({ verbose: true });
+      if (!legal.length) {
+        this.aiThinking = false;
+        this.refreshUI();
+        const gameMessage = this.evaluateGameEnd();
+        if (gameMessage) {
+          this.gameEnded = true;
+          this.statusBar.textContent = gameMessage;
+        }
+        return;
+      }
+      const fallback = legal[Math.floor(Math.random() * legal.length)];
+      movedPiece = this.chess.get(fallback.from);
+      result = this.chess.move({
+        from: fallback.from,
+        to: fallback.to,
+        promotion: fallback.promotion,
+      });
+      if (!result) {
+        this.aiThinking = false;
+        this.refreshUI();
+        return;
+      }
     }
 
-    this.renderer.animateMove(result, movingPiece);
+    this.renderer.animateMove(result, movedPiece);
     this.lastMove = { from: result.from, to: result.to };
 
     if (result.captured) {
