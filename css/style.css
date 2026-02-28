@@ -36,7 +36,7 @@ body {
   display: block;
 }
 
-#start-screen {
+#start-screen.active {
   min-height: 88vh;
   display: grid;
   place-content: center;
