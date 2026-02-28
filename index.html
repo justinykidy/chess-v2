@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas Chess Arena</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <section id="start-screen" class="screen active">
+      <h1>Canvas Chess Arena</h1>
+      <p class="subtitle">Pick your opponent strength</p>
+      <div class="difficulty-buttons">
+        <button data-difficulty="easy">Easy</button>
+        <button data-difficulty="normal">Normal</button>
+        <button data-difficulty="hard">Hard</button>
+        <button data-difficulty="hell">Hell</button>
+      </div>
+      <div id="engine-loading" class="loading">Loading Stockfish...</div>
+    </section>
+
+    <section id="game-screen" class="screen">
+      <div class="top-bar">
+        <div id="status-bar">Status: Waiting to start</div>
+        <div class="controls">
+          <button id="new-game-btn">New Game</button>
+          <button id="undo-btn">Undo</button>
+          <button id="resign-btn">Resign</button>
+        </div>
+      </div>
+
+      <div class="board-layout">
+        <div class="captured-wrap">
+          <h2>Captured by White</h2>
+          <div id="captured-white" class="captured-row"></div>
+          <h2>Captured by Black</h2>
+          <div id="captured-black" class="captured-row"></div>
+        </div>
+
+        <div id="board-container">
+          <canvas id="chess-canvas" width="720" height="720"></canvas>
+          <canvas id="effects-canvas" width="720" height="720"></canvas>
+          <div id="promotion-overlay" class="promotion-overlay hidden">
+            <div class="promotion-box">
+              <p>Promote pawn to:</p>
+              <div class="promotion-buttons">
+                <button data-piece="q">Queen</button>
+                <button data-piece="r">Rook</button>
+                <button data-piece="b">Bishop</button>
+                <button data-piece="n">Knight</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="history-wrap">
+          <h2>Move History</h2>
+          <ol id="move-history"></ol>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chess.js@0.13.4/chess.min.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
